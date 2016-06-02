@@ -16,6 +16,3 @@ content/
 output/
 assets/
 config.yaml
-gradle/
-gradlew
-gradlew.bat
