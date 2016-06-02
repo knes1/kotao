@@ -1,0 +1,74 @@
+buildscript {
+    ext.kotlin_version = '1.0.2'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'kotao'
+    version =  '0.1.0'
+}
+
+springBoot {
+    executable = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile 'org.springframework.boot:spring-boot-starter:1.3.2.RELEASE'
+
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.5'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.6.5-2'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.5'
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+
+    //FreeMarker
+    compile 'org.freemarker:freemarker:2.3.24-incubating'
+
+    //Markdown
+    compile 'org.pegdown:pegdown:1.6.0'
+
+    //Slugify
+    compile 'com.github.slugify:slugify:2.1.5'
+
+    //RetroFit REST Client
+    /*
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+    */
+
+    //Mongo
+    compile 'org.mongodb:mongo-java-driver:3.0.0'
+    compile 'org.jongo:jongo:1.2'
+
+    //Live Reload
+    compile 'org.springframework.boot:spring-boot-devtools'
+
+    testCompile 'junit:junit'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    //testCompile 'com.jayway.restassured:rest-assured:2.8.0'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}
+
