@@ -15,7 +15,8 @@ data class Configuration private constructor(
         val pages: List<SimplePage>,
         val vars: Map<String, Any>,
         val repositories: List<RepositoryConfiguration>,
-        val structure: ProjectStructure
+        val structure: ProjectStructure,
+        val site: String?
 ) {
     companion object {
         @JvmStatic @JsonCreator
@@ -24,14 +25,15 @@ data class Configuration private constructor(
             pages: List<SimplePage>? = emptyList(),
             vars: Map<String, Any>? = emptyMap(),
             repositories: List<RepositoryConfiguration>? = defaultRepositories,
-            structure: ProjectStructure? = defaultStructure
-
+            structure: ProjectStructure? = defaultStructure,
+            site: String? = null
         ) = Configuration(
                 collections = collections?: emptyList(),
                 pages = pages?: emptyList(),
                 vars = vars?: emptyMap(),
                 repositories = repositories?: defaultRepositories,
-                structure = structure?: defaultStructure
+                structure = structure?: defaultStructure,
+                site = site
             )
 
 

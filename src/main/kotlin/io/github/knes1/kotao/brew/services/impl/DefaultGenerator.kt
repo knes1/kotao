@@ -1,13 +1,15 @@
 package io.github.knes1.kotao.brew.services.impl
 
 import io.github.knes1.kotao.brew.services.*
+import io.github.knes1.kotao.brew.util.Url
+import io.github.knes1.kotao.brew.util.toXml
 import org.apache.commons.io.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
+import java.io.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.ResolverStyle
 import java.util.*
 
 /**
@@ -26,9 +28,19 @@ class DefaultGenerator @Autowired constructor(
     val paths = conf.structure
 
     override fun generateAll() {
+        processAssets()
         val pages = enumerator.enumeratePages(conf)
+        val siteMap = mutableSetOf<Url>()
+
         pages.forEach {
             generatePage(it, conf)
+            if (conf.site != null) {
+                siteMap.add(Url(conf.site + "/" + it.path + it.slug + ".html", it.publishDate()?: LocalDate.now()))
+            }
+        }
+
+        if (conf.site != null) {
+            siteMap.toXml(FileWriter(paths.output + "/sitemap.xml"))
         }
     }
 
@@ -39,7 +51,6 @@ class DefaultGenerator @Autowired constructor(
     }
 
     private fun generatePage(page: Page, configuration: Configuration) {
-        processAssets()
         val contentProcessor = Processors.processorFromExtension(page.model["processor"]?.toString()?: page.contentProcessor)
         val processor = processorResolver.resolve(contentProcessor.name)
 
@@ -57,11 +68,16 @@ class DefaultGenerator @Autowired constructor(
         model.putAll(page.model)
         model.put("content", content)
         model.put("vars", configuration.vars)
+
+        if (configuration.site != null) {
+            model.put("site", configuration.site)
+        }
+
         model.put("page", page)
 
         val template = model["template"]?.toString()?: page.template
 
-        val path = paths.pathToOutput() + "/" + page.path
+        val path = page.directory()
         File(path).mkdirs()
 
         val file = File(path + page.slug + ".html")
@@ -73,6 +89,18 @@ class DefaultGenerator @Autowired constructor(
         } catch (e: FileNotFoundException) {
             throw IllegalStateException("Could not create file $path: ${e.message}", e)
         }
+    }
+
+    fun Page.directory() = paths.pathToOutput() + "/" + path
+
+    fun Page.publishDate(): LocalDate? {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'[HH:mm[:ss[.SSS[X]]]]]").withResolverStyle(ResolverStyle.LENIENT)
+        val dateStr = model["publishDate"]?.toString()
+        if (dateStr != null) {
+            val result = try { LocalDate.parse(dateStr, formatter) } catch(e: Exception) { null }
+            return result
+        }
+        return null
     }
 
 
