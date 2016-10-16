@@ -20,9 +20,21 @@ class MongoRepository @Autowired constructor(
     override fun findAll(name: String): Sequence<Map<String, Any>> {
         return (jongo.getCollection(name)
                 .find()
-                .sort("{\"\$natural\": -1}")
+                .sort("{\"publishDate\": -1}")
                 .`as`(Map::class.java) as Iterable<Map<String, Any>>).asSequence()
     }
+
+    override fun count(name: String): Long = jongo.getCollection(name).count()
+
+    override fun find(name: String, pageStart: Long, pageSize: Long): Sequence<Map<String, Any>> {
+        return (jongo.getCollection(name)
+                .find()
+                .sort("{\"publishDate\": -1}")
+                .skip((pageStart * pageSize).toInt())
+                .limit(pageSize.toInt())
+                .`as`(Map::class.java) as Iterable<Map<String, Any>>).asSequence()
+    }
+
 
 }
 

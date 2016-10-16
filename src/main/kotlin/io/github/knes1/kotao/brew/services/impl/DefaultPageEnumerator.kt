@@ -4,6 +4,7 @@ import com.github.slugify.Slugify
 import io.github.knes1.kotao.brew.repositories.AutoCollectionRepository
 import io.github.knes1.kotao.brew.repositories.RepositoryResolver
 import io.github.knes1.kotao.brew.services.*
+import io.github.knes1.kotao.brew.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -24,23 +25,88 @@ class DefaultPageEnumerator @Autowired constructor(
         if (loadedCollections != null) {
             return loadedCollections?: throw IllegalStateException()
         }
+
+
         //we should probably have separate simple page repository with auto collections
-        val simplePages = configuration.pages.map {
+        val simplePages = configuration.pages.flatMap {
             val pathElements = it.name.split("/")
             val slug = pathElements.last()
-            val path = normalizePath(if (pathElements.size > 1) {
+            val path = Utils.normalizePath(if (pathElements.size > 1) {
                 pathElements.subList(0, pathElements.size - 1).joinToString("/")
             } else {
                 ""
             })
-            Page(
-                    model = emptyMap<String, Any>(),
-                    template = it.template,
-                    path = path,
-                    slug = slug,
-                    content = "",
-                    contentProcessor = "html"
-            )
+
+            val resultList: MutableList<Page> = arrayListOf()
+
+            var firstPageModel: Map<String, Any>? = null
+
+            if (it.paginate != null) {
+                //Get repository for referenced collection
+                val collectionName = it.paginate.collection
+                val collection = configuration.collections.firstOrNull() { it.name == collectionName } ?: throw IllegalArgumentException ("Paginete refrences undefined collection $collectionName")
+                val repositoryName = collection.repository
+                val repository = if (repositoryName != null) {
+                    repositoryResolver.resolve(repositoryName)
+                } else {
+                    repositoryResolver.defaultRepository()
+                }
+                val totalElements = repository.count(collectionName)
+                val pageSize = it.paginate.pageSize.toLong()
+                val totalPages = (totalElements / pageSize) + 1
+                for (curPage in 1..totalPages) {
+                    val paginator = Paginator(
+                        totalElements = totalElements,
+                        pageSize = pageSize,
+                        currentPage = curPage
+                    )
+
+                    //collection holding single page of date from the whole collection
+                    val collectionPage = repository.find(collectionName, curPage - 1, pageSize).map { pageDataToPage(it, collection) }.toList()
+
+                    val model: MutableMap<String, Any> =
+                            hashMapOf(
+                                    "paginator" to paginator,
+                                    "collectionPage" to collectionPage)
+                    //store model of the first page as we will reuse it on root page
+                    if (curPage == 1L) {
+                        firstPageModel = model
+                    }
+
+                    val page = Page(
+                            model = model,
+                            template = it.template,
+                            path = "page/$curPage/$path",
+                            slug = slug,
+                            content = "",
+                            contentProcessor = "html"
+                    )
+                    resultList.add(page)
+                }
+
+                //add first page to non-paged root directory
+                resultList.add(Page(
+                        model = firstPageModel?: emptyMap(),
+                        template = it.template,
+                        path = path,
+                        slug = slug,
+                        content = "",
+                        contentProcessor = "html"
+                ))
+
+
+
+            } else {
+                resultList.add(Page(
+                        model = emptyMap<String, Any>(),
+                        template = it.template,
+                        path = path,
+                        slug = slug,
+                        content = "",
+                        contentProcessor = "html"
+                ))
+            }
+            resultList
         }
         val pageMap = mutableMapOf("simplePages" to simplePages)
 
@@ -62,38 +128,37 @@ class DefaultPageEnumerator @Autowired constructor(
             } else {
                 repositoryResolver.defaultRepository()
             }
-            val pages = repo.findAll(pageCollection.name).map {
-                //TODO: error handling
+            val pages = repo.findAll(pageCollection.name).map { pageDataToPage(it, pageCollection)}.toList()
 
-                val slug = slugify.slugify(it[pageCollection.slug]?.toString()?: throw IllegalStateException("Could not determine slug for: $it"))
-
-                val baseBath = normalizePath(pageCollection.basePath.trim())
-                var path = baseBath + (it[pageCollection.pathProperty]?: "").toString()
-                path = normalizePath(path)
-
-                val content = it[pageCollection.contentProperty]?.toString()?: throw IllegalStateException("Could not determine content for: $it")
-
-                Page(
-                        model = it,
-                        template = pageCollection.template,
-                        path = path,
-                        slug = slug,
-                        content = content,
-                        contentProcessor = pageCollection.contentType
-                )
-            }.toList()
             map.apply { put(pageCollection.name, pages) }
         })
         loadedCollections = pageMap
         return pageMap
     }
 
-    private fun normalizePath(path: String) =
-        if (path.isNotEmpty() && !path.endsWith("/")) {
-            path + "/"
-        } else {
-            path
-        }
+
+    private fun pageDataToPage(
+            pageData: Map<String, Any>,
+            pageCollection: PageCollection): Page {
+
+        val slug = slugify.slugify(pageData[pageCollection.slug]?.toString()?: throw IllegalStateException("Could not determine slug for: $pageData"))
+
+        val baseBath = Utils.normalizePath(pageCollection.basePath.trim())
+        var path = baseBath + (pageData[pageCollection.pathProperty]?: "").toString()
+        path = Utils.normalizePath(path)
+
+        val content = pageData[pageCollection.contentProperty]?.toString()?: throw IllegalStateException("Could not determine content for: $pageData")
+
+        return Page(
+                model = pageData,
+                template = pageCollection.template,
+                path = path,
+                slug = slug,
+                content = content,
+                contentProcessor = pageCollection.contentType
+        )
+    }
+
 
     override fun enumeratePages(configuration: Configuration): Sequence<Page> =
         pageCollections(configuration).values.flatMap { it }.asSequence()

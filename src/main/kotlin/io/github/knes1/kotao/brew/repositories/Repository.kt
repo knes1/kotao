@@ -10,4 +10,6 @@ interface Repository {
 
     fun findAll(name: String): Sequence<Map<String, Any>>
 
+    open fun count(name: String): Long
+    open fun find(name: String, pageStart: Long, pageSize: Long): Sequence<Map<String, Any>>
 }

@@ -77,6 +77,15 @@ class FileRepository @Autowired constructor(val configurator: Configurator) : Au
         return result
     }
 
+    override fun count(name: String): Long {
+        throw UnsupportedOperationException("pagination support not implemented")
+    }
+
+    override fun find(name: String, pageStart: Long, pageSize: Long): Sequence<Map<String, Any>> {
+        throw UnsupportedOperationException("pagination support not implemented")
+    }
+
+
     fun parseFile(contentFile: File): Map<String, Any> {
         val fileContents = contentFile.readText(Charsets.UTF_8).trim()
         val frontMatterIndex = if (fileContents.startsWith("---\n")) {

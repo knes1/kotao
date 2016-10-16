@@ -2,6 +2,7 @@ package io.github.knes1.kotao.brew.services.impl
 
 import io.github.knes1.kotao.brew.services.*
 import io.github.knes1.kotao.brew.util.Url
+import io.github.knes1.kotao.brew.util.Utils
 import io.github.knes1.kotao.brew.util.toXml
 import org.apache.commons.io.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -78,7 +79,12 @@ class DefaultGenerator @Autowired constructor(
         val template = model["template"]?.toString()?: page.template
 
         val path = page.directory()
-        File(path).mkdirs()
+        val pathFile = File(path)
+        pathFile.mkdirs()
+
+        val relativeRootDir = Utils.normalizePath(File(paths.pathToOutput()).relativeTo(pathFile).path)
+
+        model.put("rootDir", relativeRootDir)
 
         val file = File(path + page.slug + ".html")
 
