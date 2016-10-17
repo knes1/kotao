@@ -12,13 +12,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 import java.util.*
+import javax.inject.Inject
 
 /**
  * @author knesek
  * Created on: 5/25/16
  */
 @Component
-class DefaultGenerator @Autowired constructor(
+class DefaultGenerator @Autowired @Inject constructor(
         val configurator: Configurator,
         val enumerator: PageEnumerator,
         val templateEngine: TemplateEngine,

@@ -7,13 +7,14 @@ import io.github.knes1.kotao.brew.services.*
 import io.github.knes1.kotao.brew.util.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import javax.inject.Inject
 
 /**
  * @author knesek
  * Created on: 5/25/16
  */
 @Component
-class DefaultPageEnumerator @Autowired constructor(
+class DefaultPageEnumerator @Inject @Autowired constructor(
         val repositoryResolver: RepositoryResolver
 ): PageEnumerator {
 

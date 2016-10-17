@@ -34,6 +34,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"

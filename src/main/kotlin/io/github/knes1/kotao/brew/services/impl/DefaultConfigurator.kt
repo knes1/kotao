@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.FileInputStream
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * @author knesek
  * Created on: 5/26/16
  */
 @Component
-class DefaultConfigurator @Autowired constructor(@Value("\${config.path:}") val pathToConfig: String?) : Configurator {
+class DefaultConfigurator @Inject constructor(@Value("\${config.path:}") @Named("config.path") val pathToConfig: String?) : Configurator {
     val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
 
     override fun loadConfiguration(): Configuration {

@@ -3,11 +3,14 @@ package io.github.knes1.kotao.brew
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.inject.Guice
 import com.mongodb.MongoClient
 import io.github.knes1.kotao.brew.services.Generator
 import io.github.knes1.kotao.brew.services.impl.DefaultGenerator
+import org.apache.log4j.spi.LoggerFactory
 import org.jongo.Jongo
 import org.jongo.marshall.jackson.JacksonMapper
+import org.slf4j.Logger
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -53,7 +56,18 @@ open class Application {
 }
 
 fun main(args: Array<String>) {
+
+    val log = org.slf4j.LoggerFactory.getLogger(Application::class.java)
+    /* //Old spring config
     val context = SpringApplication.run(Application::class.java, *args)
     val generator = context.getBean(Generator::class.java)
+    */
+    log.info("Kotao started...")
+    var time = System.currentTimeMillis()
+    val injector = Guice.createInjector(KotaoModule())
+    val generator = injector.getInstance(Generator::class.java)
+    log.info("Kotao configured in ${System.currentTimeMillis() - time} ms, starting generation...")
+    time = System.currentTimeMillis()
     generator.generateAll()
+    log.info("Page generation finished in ${System.currentTimeMillis() - time} ms.")
 }

@@ -4,13 +4,14 @@ import io.github.knes1.kotao.brew.repositories.Repository
 import io.github.knes1.kotao.brew.repositories.RepositoryResolver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import javax.inject.Inject
 
 /**
  * @author knesek
  * Created on: 5/26/16
  */
 @Component
-class DefaultRepositoryResolver @Autowired constructor(
+class DefaultRepositoryResolver @Inject @Autowired constructor(
        repositories: List<Repository>
 ) : RepositoryResolver {
 

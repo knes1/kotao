@@ -9,13 +9,14 @@ import org.springframework.stereotype.Component
 import java.io.File
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import javax.inject.Inject
 
 /**
  * @author knesek
  * Created on: 5/26/16
  */
 @Component
-class FreemarkerTemplateEngine @Autowired constructor(configurator: Configurator): TemplateEngine {
+class FreemarkerTemplateEngine @Inject @Autowired constructor(configurator: Configurator): TemplateEngine {
 
     val freemarkerConfiguration: FreeMarkerConfig
 
