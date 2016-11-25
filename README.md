@@ -77,6 +77,10 @@ references to a collection of pages) or when you simply need to generate one sta
 
 ### Collections
 
-Collections are collections of pages rendered using same template and loading content from a _repository_. Simplest collections are collections loaded from file system. If a `content` folder is present in the project, `kotao` will read markdown files in the directory an render them using `_root.ftlh` template (if not configured differently). 
+Collections are collections of pages rendered using same template and loading content from a _repository_. Simplest collections are collections loaded from file system. If a `content` folder is present in the project, `kotao` will read markdown files in the directory an render them using `_root.ftlh` template (if not configured differently).
+
+## Sites Built With Kotao
+
+* Sinful Spoonful Food Blog: www.sinfulspoonful.com
 
 
