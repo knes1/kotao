@@ -10,5 +10,6 @@ data class Page(
         val path: String,
         val slug: String,
         val content: String,
-        val contentProcessor: String
+        val contentProcessor: String,
+        val sitemap: Boolean
 )

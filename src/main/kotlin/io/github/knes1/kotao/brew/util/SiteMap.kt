@@ -46,7 +46,14 @@ fun Collection<Url>.toXml(writer: Writer) {
                 writeStartElement("url")
 
                 writeStartElement("loc")
-                writeCharacters(it.loc)
+
+                //collapse index.html in sitemap
+                val loc = if (it.loc.endsWith("index.html")) {
+                    it.loc.substring(0, it.loc.length - "index.html".length)
+                } else {
+                    it.loc
+                }
+                writeCharacters(loc)
                 writeEndElement()
 
                 writeStartElement("lastmod")

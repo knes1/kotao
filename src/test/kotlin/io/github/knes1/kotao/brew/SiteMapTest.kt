@@ -16,11 +16,13 @@ class SiteMapTest {
     fun testSiteMap() {
         val siteMap = setOf(
                 Url("http://www.example.com", "2015-01-01"),
-                Url("http://www.example.com/kotao", "2016-01-01")
+                Url("http://www.example.com/kotao", "2016-01-01"),
+                Url("http://www.example.com/kotao/index.html", "2016-01-01")
         ).toXml()
 
         Assert.assertTrue(siteMap.contains("<url><loc>http://www.example.com</loc><lastmod>2015-01-01</lastmod></url>"))
         Assert.assertTrue(siteMap.contains("<url><loc>http://www.example.com/kotao</loc><lastmod>2016-01-01</lastmod></url>"))
+        Assert.assertTrue(siteMap.contains("<url><loc>http://www.example.com/kotao/</loc><lastmod>2016-01-01</lastmod></url>"))
 
     }
 

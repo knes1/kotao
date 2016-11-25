@@ -114,18 +114,21 @@ data class PageCollection private constructor(
 data class SimplePage private constructor(
     val name: String,
     val template: String,
-    val paginate: Paginate?
+    val paginate: Paginate?,
+    val sitemap: Boolean
 ) {
     companion object {
         @JvmStatic @JsonCreator
         fun createWithDefaults(
                 name: String?,
                 template: String? = name?.split("/")?.last(),
-                paginate: Paginate? = null
+                paginate: Paginate? = null,
+                sitemap: Boolean = true
         ) = SimplePage(
                 name ?: throw IllegalArgumentException(),
                 template ?: name.split("/").last(),
-                paginate
+                paginate,
+                sitemap
         )
     }
 }

@@ -80,7 +80,8 @@ class DefaultPageEnumerator @Inject @Autowired constructor(
                             path = "page/$curPage/$path",
                             slug = slug,
                             content = "",
-                            contentProcessor = "html"
+                            contentProcessor = "html",
+                            sitemap = it.sitemap
                     )
                     resultList.add(page)
                 }
@@ -92,7 +93,8 @@ class DefaultPageEnumerator @Inject @Autowired constructor(
                         path = path,
                         slug = slug,
                         content = "",
-                        contentProcessor = "html"
+                        contentProcessor = "html",
+                        sitemap = it.sitemap
                 ))
 
 
@@ -104,7 +106,8 @@ class DefaultPageEnumerator @Inject @Autowired constructor(
                         path = path,
                         slug = slug,
                         content = "",
-                        contentProcessor = "html"
+                        contentProcessor = "html",
+                        sitemap = it.sitemap
                 ))
             }
             resultList
@@ -156,7 +159,8 @@ class DefaultPageEnumerator @Inject @Autowired constructor(
                 path = path,
                 slug = slug,
                 content = content,
-                contentProcessor = pageCollection.contentType
+                contentProcessor = pageCollection.contentType,
+                sitemap = true
         )
     }
 

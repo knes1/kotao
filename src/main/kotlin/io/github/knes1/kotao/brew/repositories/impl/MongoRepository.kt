@@ -5,6 +5,8 @@ import io.github.knes1.kotao.brew.repositories.Repository
 import org.jongo.Jongo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.Instant
+import java.util.*
 
 /**
  * @author knesek
@@ -19,7 +21,7 @@ class MongoRepository @Autowired constructor(
 
     override fun findAll(name: String): Sequence<Map<String, Any>> {
         return (jongo.getCollection(name)
-                .find()
+                .find()  //.find("{\"publishDate\" : {\$lte: \"${Instant.now().toString()}\"}}")
                 .sort("{\"publishDate\": -1}")
                 .`as`(Map::class.java) as Iterable<Map<String, Any>>).asSequence()
     }
@@ -28,7 +30,7 @@ class MongoRepository @Autowired constructor(
 
     override fun find(name: String, pageStart: Long, pageSize: Long): Sequence<Map<String, Any>> {
         return (jongo.getCollection(name)
-                .find()
+                .find() //.find("{\"publishDate\" : {\$lte: \"${Instant.now().toString()}\"}}")
                 .sort("{\"publishDate\": -1}")
                 .skip((pageStart * pageSize).toInt())
                 .limit(pageSize.toInt())

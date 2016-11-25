@@ -36,7 +36,7 @@ class DefaultGenerator @Autowired @Inject constructor(
 
         pages.forEach {
             generatePage(it, conf)
-            if (conf.site != null) {
+            if (conf.site != null && it.sitemap) {
                 siteMap.add(Url(conf.site + "/" + it.path + it.slug + ".html", it.publishDate()?: LocalDate.now()))
             }
         }
@@ -66,7 +66,8 @@ class DefaultGenerator @Autowired @Inject constructor(
             page.content
         }
         val model = HashMap<String, Any>(configuration.vars)
-        model.put("collections", enumerator.pageCollections(configuration))
+        val collections = enumerator.pageCollections(configuration);
+        model.put("collections", collections)
         model.putAll(page.model)
         model.put("content", content)
         model.put("vars", configuration.vars)
@@ -87,7 +88,10 @@ class DefaultGenerator @Autowired @Inject constructor(
 
         model.put("rootDir", relativeRootDir)
 
-        val file = File(path + page.slug + ".html")
+        //if page's slug doesn't already have an extension, we'll add .html
+        val fileExtension = if (page.slug.contains(".")) "" else ".html"
+
+        val file = File(path + page.slug + fileExtension)
 
         try {
             FileOutputStream(file).use {
