@@ -8,9 +8,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.github.knes1.kotao.brew.repositories.AutoCollectionRepository
 import io.github.knes1.kotao.brew.services.Configurator
 import io.github.knes1.kotao.brew.services.PageCollection
-import io.github.knes1.kotao.brew.services.Processors
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import java.io.File
 import java.util.*
 
@@ -18,11 +15,20 @@ import java.util.*
  * @author knesek
  * Created on: 5/27/16
  */
-@Component
-class FileRepository @Autowired constructor(val configurator: Configurator) : AutoCollectionRepository {
+class FileRepository(configurator: Configurator) : AutoCollectionRepository {
 
     companion object {
         val ROOT_COLLECTION_NAME = "_root"
+    }
+
+    val config: FileRepositoryConfiguration
+    val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+
+    init {
+        val configuration = configurator.loadConfiguration()
+        config = configuration.repositories
+                .filterIsInstance(FileRepositoryConfiguration::class.java)
+                .firstOrNull()?: FileRepositoryConfiguration.createWithDefaults()
     }
 
     override fun name(): String = "file"
@@ -36,26 +42,15 @@ class FileRepository @Autowired constructor(val configurator: Configurator) : Au
             val name = if (!relativeName.isEmpty()) relativeName else ROOT_COLLECTION_NAME
             val basePath = if (!relativeName.isEmpty()) name else ""
             PageCollection.createWithDefaults(
-                name = name,
-                repository = "file",
-                contentProperty = "content",
-                slug = "slug",
-                basePath = basePath
+                    name = name,
+                    repository = "file",
+                    contentProperty = "content",
+                    slug = "slug",
+                    basePath = basePath
             )
         }
         return children
     }
-
-    val config: FileRepositoryConfiguration
-    val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
-
-    init {
-        val configuration = configurator.loadConfiguration()
-        config = configuration.repositories
-                .filterIsInstance(FileRepositoryConfiguration::class.java)
-                .firstOrNull()?: FileRepositoryConfiguration.createWithDefaults()
-    }
-
     override fun findAll(name: String): Sequence<Map<String, Any>> {
         //Validation
         val collectionName = if (name == ROOT_COLLECTION_NAME) "" else name

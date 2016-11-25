@@ -3,17 +3,13 @@ package io.github.knes1.kotao.brew.repositories.impl
 import com.fasterxml.jackson.annotation.JsonCreator
 import io.github.knes1.kotao.brew.repositories.Repository
 import org.jongo.Jongo
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-import java.time.Instant
-import java.util.*
 
 /**
  * @author knesek
  * Created on: 5/26/16
  */
-@Component
-class MongoRepository @Autowired constructor(
+
+class MongoRepository(
         val jongo: Jongo
 ) : Repository {
 

@@ -2,21 +2,18 @@ package io.github.knes1.kotao.brew.services.impl
 
 import freemarker.template.TemplateExceptionHandler
 import io.github.knes1.kotao.brew.services.Configurator
-import freemarker.template.Configuration as FreeMarkerConfig
 import io.github.knes1.kotao.brew.services.TemplateEngine
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import java.io.File
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import javax.inject.Inject
+import freemarker.template.Configuration as FreeMarkerConfig
 
 /**
  * @author knesek
  * Created on: 5/26/16
  */
-@Component
-class FreemarkerTemplateEngine @Inject @Autowired constructor(configurator: Configurator): TemplateEngine {
+class FreemarkerTemplateEngine @Inject constructor(configurator: Configurator): TemplateEngine {
 
     val freemarkerConfiguration: FreeMarkerConfig
 

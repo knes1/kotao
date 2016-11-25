@@ -33,7 +33,6 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
@@ -41,7 +40,6 @@ dependencies {
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jackson_version"
 
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
-
 
     //FreeMarker
     compile 'org.freemarker:freemarker:2.3.24-incubating'
@@ -52,23 +50,16 @@ dependencies {
     //Slugify
     compile 'com.github.slugify:slugify:2.1.5'
 
-    //RetroFit REST Client
-    /*
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
-    compile 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
-    */
-
     //Mongo
     compile 'org.mongodb:mongo-java-driver:3.0.0'
     compile 'org.jongo:jongo:1.2'
 
-    //Live Reload
-    compile 'org.springframework.boot:spring-boot-devtools'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+
 
     testCompile 'junit:junit'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    //testCompile 'com.jayway.restassured:rest-assured:2.8.0'
     testCompile 'org.mockito:mockito-all:1.9.5'
 }
 

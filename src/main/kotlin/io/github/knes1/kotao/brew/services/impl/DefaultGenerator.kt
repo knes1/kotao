@@ -5,8 +5,6 @@ import io.github.knes1.kotao.brew.util.Url
 import io.github.knes1.kotao.brew.util.Utils
 import io.github.knes1.kotao.brew.util.toXml
 import org.apache.commons.io.FileUtils
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import java.io.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -18,8 +16,7 @@ import javax.inject.Inject
  * @author knesek
  * Created on: 5/25/16
  */
-@Component
-class DefaultGenerator @Autowired @Inject constructor(
+class DefaultGenerator @Inject constructor(
         val configurator: Configurator,
         val enumerator: PageEnumerator,
         val templateEngine: TemplateEngine,
