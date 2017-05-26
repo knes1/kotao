@@ -46,7 +46,7 @@ class DefaultGenerator @Inject constructor(
     private fun processAssets() {
         val assets = File(paths.pathToAssets())
         if (!assets.exists() || !assets.isDirectory) return
-        FileUtils.copyDirectory(assets, File(paths.pathToOutput()))
+        FileUtils.copyDirectory(assets, File(paths.pathToOutput()), { true })
     }
 
     private fun generatePage(page: Page, configuration: Configuration) {

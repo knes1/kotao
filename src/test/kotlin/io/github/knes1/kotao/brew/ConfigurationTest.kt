@@ -14,19 +14,43 @@ import org.junit.Test
  */
 class ConfigurationTest {
 
+    val mapper: ObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+
     @Test
     fun testLoadConfigFile() {
-        val mapper = ObjectMapper(YAMLFactory())    // Enable YAML parsing
-        mapper.registerModule(KotlinModule())       // Enable Kotlin support
 
         val config = ConfigurationTest::class.java.getResourceAsStream("config.yaml").use {
             mapper.readValue(it, Configuration::class.java)
         }
 
-        assertEquals(Configuration.createWithDefaults(
-                listOf(PageCollection.createWithDefaults(name = "articles"), PageCollection.createWithDefaults(name = "authors"))
+        assertEquals(Configuration(
+                listOf(PageCollection(name = "articles"), PageCollection(name = "authors"))
         ), config)
     }
+
+
+    @Test
+    fun testDefaultDeser() {
+
+        val yaml = """
+        foo: 4
+        kik: "bla"
+        """
+        val test = mapper.readValue(yaml, TestDefaultDeserialization::class.java)
+        assertEquals(TestDefaultDeserialization(foo = 4, kik = "bla"), test)
+
+    }
+
+
+    data class TestDefaultDeserialization(
+            val bar: String = "",
+            val foo: Int,
+            val kik: String,
+            val mao: Int = 4,
+            val tib: String? = "tib",
+            val xee: Int? = null
+    )
+
 
 
 }

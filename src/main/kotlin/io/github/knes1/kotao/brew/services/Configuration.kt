@@ -1,7 +1,5 @@
 package io.github.knes1.kotao.brew.services
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
 import io.github.knes1.kotao.brew.repositories.impl.FileRepositoryConfiguration
 import io.github.knes1.kotao.brew.repositories.impl.MongoRepositoryConfiguration
 import io.github.knes1.kotao.brew.repositories.impl.RepositoryConfiguration
@@ -10,144 +8,54 @@ import io.github.knes1.kotao.brew.repositories.impl.RepositoryConfiguration
  * @author knesek
  * Created on: 5/15/16
  */
-data class Configuration private constructor(
-        val collections: List<PageCollection>,
-        val pages: List<SimplePage>,
-        val vars: Map<String, Any>,
-        val repositories: List<RepositoryConfiguration>,
-        val structure: ProjectStructure,
-        val site: String?
+data class Configuration (
+        val collections: List<PageCollection> = emptyList(),
+        val pages: List<SimplePage> = emptyList(),
+        val vars: Map<String, Any> = emptyMap(),
+        val repositories: List<RepositoryConfiguration> = listOf(
+                FileRepositoryConfiguration(),
+                MongoRepositoryConfiguration()
+        ),
+        val structure: ProjectStructure = ProjectStructure(),
+        val site: String? = null
+)
+
+data class ProjectStructure(
+    val baseDir: String = "",
+    val assets: String = "assets",
+    val templates: String = "templates",
+    val output: String = "output"
 ) {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-            collections: List<PageCollection>? = emptyList(),
-            pages: List<SimplePage>? = emptyList(),
-            vars: Map<String, Any>? = emptyMap(),
-            repositories: List<RepositoryConfiguration>? = defaultRepositories,
-            structure: ProjectStructure? = defaultStructure,
-            site: String? = null
-        ) = Configuration(
-                collections = collections?: emptyList(),
-                pages = pages?: emptyList(),
-                vars = vars?: emptyMap(),
-                repositories = repositories?: defaultRepositories,
-                structure = structure?: defaultStructure,
-                site = site
-            )
-
-
-        val defaultRepositories = listOf(
-                FileRepositoryConfiguration.createWithDefaults(),
-                MongoRepositoryConfiguration.createWithDefaults()
-        )
-
-        val defaultStructure = ProjectStructure.createWithDefaults()
-    }
-}
-
-data class ProjectStructure private constructor(
-    val baseDir: String,
-    val assets: String,
-    val templates: String,
-    val output: String
-) {
-
     fun pathToAssets() = pathRelativeToBaseDir(assets)
     fun pathToTemplates() = pathRelativeToBaseDir(templates)
     fun pathToOutput() = pathRelativeToBaseDir(output)
 
     private fun pathRelativeToBaseDir(relative: String) = if (baseDir.isNullOrBlank()) relative else baseDir + "/" + relative
-
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-            baseDir: String? = "",
-            assets: String? = "assets",
-            templates: String? = "templates",
-            output: String? = "output"
-        ) = ProjectStructure(
-                baseDir = baseDir?: "",
-                assets = assets?: "assets",
-                templates = templates?: "templates",
-                output = output?: "output"
-        )
-    }
 }
 
 
-data class PageCollection private constructor(
-    val name: String,
-    val slug: String,
-    val pathProperty: String?,
-    val basePath: String,
-    val contentProperty: String,
-    val contentType: String,
-    val template: String,
-    val repository: String?
-) {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-                name: String?,
-                slug: String? = "slug",
-                pathProperty: String? = null,
-                basePath: String? = name,
-                contentProperty: String? = "content",
-                contentType: String? = "html",
-                template: String? = name,
-                repository: String? = null
-        ) = PageCollection(
-                name ?: throw IllegalArgumentException(),
-                slug ?: "slug",
-                pathProperty,
-                basePath ?: name,
-                contentProperty ?: "content",
-                contentType ?: "html",
-                template ?: name,
-                repository
-        )
-    }
+data class PageCollection (
+    val name: String = throw InvalidConfigurationException("Configuration section 'collections' - every collection needs to have non empty 'name' parameter."),
+    val slug: String = "slug",
+    val pathProperty: String? = null,
+    val basePath: String = name,
+    val contentProperty: String = "content",
+    val contentType: String = "html",
+    val template: String = name,
+    val repository: String? = null
+)
 
-}
+data class SimplePage (
+    val name: String = throw InvalidConfigurationException("Configuration section 'pages' - every simple page needs to have non empty 'name' parameter."),
+    val template: String = name?.split("/")?.last(),
+    val paginate: Paginate? = null,
+    val sitemap: Boolean = true
+)
 
-data class SimplePage private constructor(
-    val name: String,
-    val template: String,
-    val paginate: Paginate?,
-    val sitemap: Boolean
-) {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-                name: String?,
-                template: String? = name?.split("/")?.last(),
-                paginate: Paginate? = null,
-                sitemap: Boolean = true
-        ) = SimplePage(
-                name ?: throw IllegalArgumentException(),
-                template ?: name.split("/").last(),
-                paginate,
-                sitemap
-        )
-    }
-}
-
-data class Paginate private constructor(
-        val collection: String,
-        val pageSize: Int
-) {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-                collection: String?,
-                pageSize: Int? = 10
-        ) = Paginate(
-                collection ?: throw IllegalArgumentException("Paginate needs to have collection parameter defined"),
-                pageSize ?: 10
-        )
-    }
-}
+data class Paginate (
+    val collection: String = throw InvalidConfigurationException("Configuration section 'paginate' - every paginate section needs to have a 'collection' parameter that refers to collection name that is going to be paginated."),
+    val pageSize: Int = 10
+)
 
 
 

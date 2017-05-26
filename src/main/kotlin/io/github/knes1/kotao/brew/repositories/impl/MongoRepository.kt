@@ -36,18 +36,30 @@ class MongoRepository(
 
 }
 
-class MongoRepositoryConfiguration(
-        override val name: String,
-        override val autoCollections: Boolean
+class MongoRepositoryConfiguration (
+        override val name: String = "mongo",
+        override val autoCollections: Boolean = false
 ) : RepositoryConfiguration() {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-                name: String? = "mongo",
-                autoCollections: Boolean? = false
-        ) = MongoRepositoryConfiguration(
-                name = name?: "mongo",
-                autoCollections = autoCollections?: false
-        )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as MongoRepositoryConfiguration
+
+        if (name != other.name) return false
+        if (autoCollections != other.autoCollections) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + autoCollections.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "MongoRepositoryConfiguration(name='$name', autoCollections=$autoCollections)"
     }
 }

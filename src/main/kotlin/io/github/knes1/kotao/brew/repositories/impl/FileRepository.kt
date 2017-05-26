@@ -28,7 +28,7 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
         val configuration = configurator.loadConfiguration()
         config = configuration.repositories
                 .filterIsInstance(FileRepositoryConfiguration::class.java)
-                .firstOrNull()?: FileRepositoryConfiguration.createWithDefaults()
+                .firstOrNull()?: FileRepositoryConfiguration()
     }
 
     override fun name(): String = "file"
@@ -41,7 +41,7 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
             val relativeName = it.toRelativeString(root)
             val name = if (!relativeName.isEmpty()) relativeName else ROOT_COLLECTION_NAME
             val basePath = if (!relativeName.isEmpty()) name else ""
-            PageCollection.createWithDefaults(
+            PageCollection(
                     name = name,
                     repository = "file",
                     contentProperty = "content",
@@ -119,21 +119,35 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
             child.canonicalPath.startsWith(parent.canonicalPath + File.separator);
 }
 
-class FileRepositoryConfiguration private constructor(
-        override val name: String,
-        override val autoCollections: Boolean,
-        val basePath: String? = "content"
+class FileRepositoryConfiguration (
+        override val name: String = "file",
+        override val autoCollections: Boolean = true,
+        val basePath: String = "content"
 ) : RepositoryConfiguration() {
-    companion object {
-        @JvmStatic @JsonCreator
-        fun createWithDefaults(
-                name: String? = "file",
-                autoCollections: Boolean? = true,
-                basePath: String? = "content"
-        ) = FileRepositoryConfiguration(
-                name = name?: "file",
-                autoCollections = autoCollections?: true,
-                basePath = basePath?: "content"
-        )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as FileRepositoryConfiguration
+
+        if (name != other.name) return false
+        if (autoCollections != other.autoCollections) return false
+        if (basePath != other.basePath) return false
+
+        return true
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + autoCollections.hashCode()
+        result = 31 * result + basePath.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "FileRepositoryConfiguration(name='$name', autoCollections=$autoCollections, basePath='$basePath')"
+    }
+
+
 }
