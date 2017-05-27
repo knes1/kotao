@@ -44,20 +44,40 @@ Contents of `config.yaml` configuration file for a single _simple page_ using gi
 
 We insturct `kotao` to create a single _simple page_ called `index.html`. By convention `kotao` will use the template with the same name as the _simple page_ - `index.ftlh`. The configuration has a single section - `pages`. `pages` section contains configuration for so called _simple pages_, one-off pages that are rendered using a given data. After running `kotao`, `output` directory will be created containing a sigle page from a rendered template - `index.html`.
 
-This minimal hello world setup is not particulary useful as it renders only a single page. Usualy, starter project will at least contain `assets` folder (to hold static assets such as images, css and js files) and `content` folder to hold markdown content for pages. It could look like this:
+This minimal hello world setup is not particularly useful as it renders only a single page. Usually, starter project will at least contain `assets` folder (to hold static assets such as images, css and js files) and `content` folder to hold markdown content for pages. It could look like this:
 
     project_dir
-     +-- config.yml
+     +-- config.yaml
      +-- templates/
           +-- _root.ftlh
      +--assets/
           +-- main.css
           +-- main.js
      +--content/
-          +-- 2016-01-01-Hello_World.md
-          +-- 2016-02-03-My_Second_Post.md
+          +-- 2017-01-01-Hello_World.md
+          +-- 2017-05-05-My_Second_Post.md
 
 In this configuration `kotao` will read markdown files in `content` directory, use them as content available in default template for so called _file_repository_ - `_root.ftlh` and render results to output folder.
+
+## Building the Site
+
+To build the site just run `kotao` in the root project directory. 
+
+### Dev Server
+
+Kotao also comes with an embedded web server that can be used
+while developing the site. To start kotao together with development server run:
+
+`kotao -s`
+
+You can then access the site on http://localhost:8080
+
+When development server is running, it will watch for changes in the file system and will re-build the site
+if the underlying files changes. Web page will be automatically reloaded in the browser once the build completes.
+
+### Starting Dev Server
+
+
 
 ## Configuration
 

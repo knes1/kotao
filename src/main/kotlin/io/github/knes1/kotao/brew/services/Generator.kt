@@ -16,5 +16,7 @@ package io.github.knes1.kotao.brew.services
 interface Generator {
 
     fun generateAll()
+    fun processAssets()
+    fun generatePages()
 
 }

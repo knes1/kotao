@@ -27,7 +27,11 @@ class DefaultGenerator @Inject constructor(
     val paths = conf.structure
 
     override fun generateAll() {
-        processAssets()
+       processAssets()
+       generatePages()
+    }
+
+    override fun generatePages() {
         val pages = enumerator.enumeratePages(conf)
         val siteMap = mutableSetOf<Url>()
 
@@ -43,7 +47,7 @@ class DefaultGenerator @Inject constructor(
         }
     }
 
-    private fun processAssets() {
+    override fun processAssets() {
         val assets = File(paths.pathToAssets())
         if (!assets.exists() || !assets.isDirectory) return
         FileUtils.copyDirectory(assets, File(paths.pathToOutput()), { true })
