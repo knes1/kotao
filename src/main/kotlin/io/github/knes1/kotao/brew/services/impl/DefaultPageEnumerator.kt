@@ -165,5 +165,7 @@ class DefaultPageEnumerator @Inject constructor(
     override fun enumeratePages(configuration: Configuration): Sequence<Page> =
         pageCollections(configuration).values.flatMap { it }.asSequence()
 
-
+    override fun reset() {
+        loadedCollections = null
+    }
 }

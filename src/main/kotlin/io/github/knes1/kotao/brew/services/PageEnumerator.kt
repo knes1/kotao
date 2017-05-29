@@ -8,5 +8,6 @@ interface PageEnumerator {
 
     fun enumeratePages(configuration: Configuration): Sequence<Page>
     fun pageCollections(configuration: Configuration): Map<String, List<Page>>
+    fun reset()
 
 }

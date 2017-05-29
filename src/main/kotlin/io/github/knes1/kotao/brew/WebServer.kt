@@ -64,6 +64,7 @@ class WebServer(
 				val injected = contents.replace("<body>", """<body>
 					<script src="/_kotao/static/sockjs.min.js"></script>
 					<script src='/_kotao/static/vertx-eventbus.js'></script>
+					<script src='/_kotao/static/spin.min.js'></script>
 					<script src='/_kotao/static/kotao.js'></script>
 				"""
 				)

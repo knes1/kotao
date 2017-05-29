@@ -5,6 +5,7 @@ import com.barbarysoftware.watchservice.WatchableFile
 import com.google.inject.Inject
 import com.sinfulspoonful.kotao.util.lazyLogger
 import io.github.knes1.kotao.brew.repositories.impl.FileRepository
+import io.github.knes1.kotao.brew.repositories.impl.FileRepositoryConfiguration
 import io.github.knes1.kotao.brew.services.Configuration
 import java.nio.file.*
 
@@ -29,7 +30,7 @@ class FileWatcher @Inject constructor(
 	private fun pathsToWatch(): List<Path> =
 			mutableListOf<Path>().apply {
 				val fs = FileSystems.getDefault()
-				addAll(config.repositories.filterIsInstance(FileRepository::class.java).map { fs.getPath(it.config.basePath) })
+				addAll(config.repositories.filterIsInstance(FileRepositoryConfiguration::class.java).map { fs.getPath(it.basePath) })
 				add(fs.getPath(config.structure.pathToTemplates()))
 				add(fs.getPath(config.structure.pathToAssets()))
 			}.filter { Files.exists(it) && Files.isDirectory(it) }

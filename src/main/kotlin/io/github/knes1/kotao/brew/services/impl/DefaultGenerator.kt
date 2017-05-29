@@ -27,8 +27,9 @@ class DefaultGenerator @Inject constructor(
     val paths = conf.structure
 
     override fun generateAll() {
-       processAssets()
-       generatePages()
+       	processAssets()
+       	generatePages()
+		enumerator.reset()
     }
 
     override fun generatePages() {

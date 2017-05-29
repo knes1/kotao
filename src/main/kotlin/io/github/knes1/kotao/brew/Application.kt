@@ -30,18 +30,26 @@ class Application {
         val generator = this.generator
         log.info("Kotao configured in ${System.currentTimeMillis() - time} ms, starting generation...")
         time = System.currentTimeMillis()
-        generator.generateAll()
+        try {
+            generator.generateAll()
+        } catch (e: Exception) {
+            log.error(e.message, e)
+        }
         log.info("Page generation finished in ${System.currentTimeMillis() - time} ms.")
     }
 
     fun watch() {
         val fileWatcher = FileWatcher(config)
         fileWatcher.addChangeListener {
-            val time = System.currentTimeMillis()
-            vertx.eventBus().send("updates", "starting")
-            generator.generateAll()
-            vertx.eventBus().send("updates", "finished")
-            log.info("Page generation finished in ${System.currentTimeMillis() - time} ms.")
+                val time = System.currentTimeMillis()
+                vertx.eventBus().send("updates", "starting")
+                try {
+                    generator.generateAll()
+                } catch (e: Exception) {
+                    log.error(e.message, e)
+                }
+                vertx.eventBus().send("updates", "finished")
+                log.info("Page generation finished in ${System.currentTimeMillis() - time} ms.")
         }
         fileWatcher.watch()
     }
