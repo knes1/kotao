@@ -13,6 +13,22 @@ samples:
 
 * [kotao-getting-started](https://github.com/knes1/kotao-getting-started)
 
+## Quick Start
+
+Run the build script, create a script to run kotao, name it `kotao` and put in:
+```
+java -jar /path_to/kotao/build/libs/kotao-0.1.0.jar "$@"
+```
+Put the `kotao` script in your PATH, and then:
+
+```
+kotao --init mysite
+cd mysite
+kotao -s
+```
+
+Point your browser to http://localhost:8080
+
 ## Project Structure
 
 Kotao project typically consists of:
@@ -59,6 +75,7 @@ This minimal hello world setup is not particularly useful as it renders only a s
 
 In this configuration `kotao` will read markdown files in `content` directory, use them as content available in default template for so called _file_repository_ - `_root.ftlh` and render results to output folder.
 
+
 ## Building the Site
 
 To build the site just run `kotao` in the root project directory. 
@@ -74,10 +91,6 @@ You can then access the site on http://localhost:8080
 
 When development server is running, it will watch for changes in the file system and will re-build the site
 if the underlying files changes. Web page will be automatically reloaded in the browser once the build completes.
-
-### Starting Dev Server
-
-
 
 ## Configuration
 
