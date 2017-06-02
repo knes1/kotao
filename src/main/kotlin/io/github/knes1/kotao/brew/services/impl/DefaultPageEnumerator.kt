@@ -42,7 +42,7 @@ class DefaultPageEnumerator @Inject constructor(
             if (it.paginate != null) {
                 //Get repository for referenced collection
                 val collectionName = it.paginate.collection
-                val collection = configuration.collections.firstOrNull() { it.name == collectionName } ?: throw IllegalArgumentException ("Paginete refrences undefined collection $collectionName")
+                val collection = configuration.collections.firstOrNull { it.name == collectionName } ?: throw IllegalArgumentException ("Paginate references undefined collection $collectionName")
                 val repositoryName = collection.repository
                 val repository = if (repositoryName != null) {
                     repositoryResolver.resolve(repositoryName)

@@ -63,7 +63,9 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
         if (!collectionDir.exists() || !collectionDir.isDirectory) throw  IllegalArgumentException("Collection names need to be directories inside $root, $collectionDir is not a directory or does not exist")
 
         val result = collectionDir
-                .listFiles()
+                .listFiles().apply {
+                    sortBy { it.name }
+                }
                 .asSequence()
                 .filterNot { it.isDirectory }
                 .map {
@@ -72,13 +74,10 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
         return result
     }
 
-    override fun count(name: String): Long {
-        throw UnsupportedOperationException("pagination support not implemented")
-    }
+    override fun count(name: String) = findAll(name).count().toLong()
 
-    override fun find(name: String, pageStart: Long, pageSize: Long): Sequence<Map<String, Any>> {
-        throw UnsupportedOperationException("pagination support not implemented")
-    }
+
+    override fun find(name: String, pageStart: Long, pageSize: Long) = findAll(name).drop((pageStart * pageSize).toInt()).take(pageSize.toInt())
 
 
     fun parseFile(contentFile: File): Map<String, Any> {
@@ -116,7 +115,7 @@ class FileRepository(configurator: Configurator) : AutoCollectionRepository {
 
     fun isFileChildOf(parent: File, child: File) =
             child.canonicalPath == parent.canonicalPath ||
-            child.canonicalPath.startsWith(parent.canonicalPath + File.separator);
+            child.canonicalPath.startsWith(parent.canonicalPath + File.separator)
 }
 
 class FileRepositoryConfiguration (

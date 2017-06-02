@@ -1,0 +1,13 @@
+site: www.${projectName}.com
+collections:
+  - name: articles
+pages:
+  - name: index
+    template: index
+    paginate:
+      collection: articles
+      pageSize: 10
+vars:
+  project: ${projectName}
+  author: ${user}
+  googleAnalytics: "UA-XXXXX-X" #Change to your site's ID, or delete this line for no GA

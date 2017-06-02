@@ -56,6 +56,7 @@ dependencies {
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jackson_version"
 
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile "com.xenomachina:kotlin-argparser:2.0.1"
 
     //FreeMarker
     compile 'org.freemarker:freemarker:2.3.24-incubating'

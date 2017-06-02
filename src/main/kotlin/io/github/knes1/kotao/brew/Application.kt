@@ -3,12 +3,19 @@ package io.github.knes1.kotao.brew
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.sinfulspoonful.kotao.util.lazyLogger
+import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.DefaultHelpFormatter
+import com.xenomachina.argparser.ShowHelpException
 import io.github.knes1.kotao.brew.services.Configuration
 import io.github.knes1.kotao.brew.services.Configurator
 import io.github.knes1.kotao.brew.services.Generator
+import io.github.knes1.kotao.brew.util.Utils
 import io.github.knes1.kotao.brew.util.getInstance
 import io.vertx.core.Vertx
+import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
+import java.io.File
+import java.nio.charset.Charset
 
 /**
  * Kotao entry point class. Kotao depends on Guice to inject its main components which are defined in KotaoModule.
@@ -61,14 +68,45 @@ class Application {
             }
         }
     }
+
+    fun initNewProject(name: String, overwrite: Boolean) {
+        val projDir = File(name)
+        if (projDir.exists()) {
+            if (projDir.listFiles().isNotEmpty() && !overwrite) {
+                throw IllegalArgumentException("Directory $name already exists and is not empty. Please choose a different project name.")
+            }
+        } else {
+            if(!projDir.mkdir()) {
+                throw IllegalArgumentException("Error initializing project: could not create directory $name.")
+            }
+        }
+
+        Utils.copyDirFromResources("/initializers/responsive", projDir, overwrite)
+
+        //Replace variables in config.yaml
+        val configFile = File(projDir.path + File.separatorChar + "config.yaml")
+
+        val configFileContents = FileUtils.readFileToString(configFile, Charset.forName("UTF-8"))
+                .replace("\${projectName}", name)
+                .replace("\${user}", System.getProperty("user.name"))
+        FileUtils.write(configFile, configFileContents, Charset.forName("UTF-8"))
+        log.info("Initialized new project $name.")
+    }
 }
 
 fun main(args: Array<String>) {
-    val app = Application()
-    app.init()
-    args.firstOrNull { it == "-s" }?.run {
-        app.startServer()
-        app.watch()
-    }
+    val arguments = Arguments(ArgParser(args = args, helpFormatter = DefaultHelpFormatter()))
 
+
+    val app = Application()
+    try {
+        arguments.init?.run { app.initNewProject(this, arguments.overwrite); return }
+        app.init()
+        if (arguments.server) {
+            app.startServer()
+            app.watch()
+        }
+    } catch (e: ShowHelpException) {
+        e.printAndExit("kotao")
+    }
 }

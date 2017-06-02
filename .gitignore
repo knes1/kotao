@@ -11,8 +11,10 @@ target
 *.iml
 bin/
 build/
-templates/
-content/
-output/
-assets/
-config.yaml
+/templates/
+/content/
+/output/
+/assets/
+/config.yaml
+/minimal
+/*.sh
