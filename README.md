@@ -8,10 +8,7 @@ Kotlin plugins.
 
 # Documentation 
 
-The documentation is still work in progress as Kotao feature-set is evolving. Please refer to following projects as
-samples:
-
-* [kotao-getting-started](https://github.com/knes1/kotao-getting-started)
+The documentation is still work in progress as Kotao feature-set is evolving. 
 
 ## Quick Start
 
