@@ -38,7 +38,15 @@ Point your browser to http://localhost:8080
 
 # Documentation 
 
-The documentation is still work in progress as Kotao feature-set is evolving. 
+The documentation is still work in progress as Kotao feature-set is evolving.
+
+## Building From Sources
+
+To get the most recent version of kotao, you can build it from the sources. Clone the repository and then execute:
+
+`./gradlew build distZip`
+
+You will then find the installation zip package with startup scripts in `build/distributions/kotao.zip`
 
 ## Project Structure
 
