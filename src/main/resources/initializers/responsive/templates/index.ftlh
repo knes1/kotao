@@ -9,7 +9,7 @@
                     <h2>${article.model.title}</h2>
                     <p>${c.summary(article.content)}</p>
                     <p>
-                        <a href="${rootDir + 'articles/' + article.model.slug + '.html'}">Read More</a>
+                        <a href="${rootDir + article.link}">Read More</a>
                     </p>
                 </section>
             </#list>

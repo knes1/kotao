@@ -13,9 +13,9 @@ buildscript {
 
 // apply plugin: 'java'
 apply plugin: 'kotlin'
-// apply plugin: 'application'
+apply plugin: 'application'
 
-// mainClassName = "io.github.knes1.kotao.brew.ApplicationKt"
+mainClassName = "io.github.knes1.kotao.brew.ApplicationKt"
 
 jar {
     baseName = 'kotao'
@@ -23,7 +23,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'Kotao Static Site Generator',
                 'Implementation-Version': version,
-                'Main-Class': 'io.github.knes1.kotao.brew.ApplicationKt'
+                'Main-Class': mainClassName
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

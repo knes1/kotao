@@ -59,8 +59,10 @@ class DefaultPageEnumerator @Inject constructor(
                         currentPage = curPage
                     )
 
-                    //collection holding single page of date from the whole collection
-                    val collectionPage = repository.find(collectionName, curPage - 1, pageSize).map { pageDataToPage(it, collection) }.toList()
+                    //collection holding single page of data from the whole collection
+                    val collectionPage = repository.find(collectionName, curPage - 1, pageSize).map {
+                        pageDataToPage(it, collection)
+                    }.toList()
 
                     val model: MutableMap<String, Any> =
                             hashMapOf(
@@ -129,7 +131,9 @@ class DefaultPageEnumerator @Inject constructor(
             } else {
                 repositoryResolver.defaultRepository()
             }
-            val pages = repo.findAll(pageCollection.name).map { pageDataToPage(it, pageCollection)}.toList()
+            val pages = repo.findAll(pageCollection.name).map {
+                pageDataToPage(it, pageCollection)
+            }.toList()
 
             map.apply { put(pageCollection.name, pages) }
         })

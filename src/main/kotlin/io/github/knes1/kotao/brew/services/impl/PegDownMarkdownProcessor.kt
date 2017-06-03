@@ -16,7 +16,7 @@ class PegDownMarkdownProcessor : Processor {
     override fun process(input: String, output: OutputStream) {
         //TODO make extensions confgurable
         //val processor = PegDownProcessor(Extensions.ANCHORLINKS)
-        val processor = PegDownProcessor()
+        val processor = PegDownProcessor(Extensions.FENCED_CODE_BLOCKS)
         val outputStr = processor.markdownToHtml(input)
         BufferedWriter(OutputStreamWriter(output)).use {
             it.write(outputStr)

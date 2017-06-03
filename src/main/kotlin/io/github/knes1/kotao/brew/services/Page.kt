@@ -12,4 +12,10 @@ data class Page(
         val content: String,
         val contentProcessor: String,
         val sitemap: Boolean
-)
+) {
+	/**
+	 * Link from the root of the site to the page.
+	 */
+	val link: String
+		get() = path + slug + "." + contentProcessor
+}
