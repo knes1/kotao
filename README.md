@@ -6,12 +6,39 @@ as a template engine. In this is early version this is all there is :) Kotao's d
 friendliness. Hopefully, it will support many content sources, markups, templating engines, javascript via Kotlin and 
 Kotlin plugins.
 
+## Installation
+
+### Java
+
+Kotao requires [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+to run:
+* If you don't have Java installed, you can download it [here.](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+* You need to be able to run command `java` from your command prompt (`java` should be in your `PATH` environment variable).
+
+### Download Kotao
+
+* Download latest kotao zip file from [releases page](https://github.com/knes1/kotao/releases) and unzip the zip file in your file system.
+* Add `bin/kotao` (or `bin\kotao.bat` in Windows) to your `PATH` environment variable.
+* You should now be able to open command prompt and run `kotao --help` to verify kotao is installed.
+
+## Quick Start
+
+Create a new project called `mysite`:
+```
+kotao --init mysite
+```
+Change directory to `mysite` and run kotao:
+```
+cd mysite
+kotao -s
+```
+
+Point your browser to http://localhost:8080
+
+
 # Documentation 
 
-The documentation is still work in progress as Kotao feature-set is evolving. Please refer to following projects as
-samples:
-
-* [kotao-getting-started](https://github.com/knes1/kotao-getting-started)
+The documentation is still work in progress as Kotao feature-set is evolving. 
 
 ## Project Structure
 
@@ -59,6 +86,7 @@ This minimal hello world setup is not particularly useful as it renders only a s
 
 In this configuration `kotao` will read markdown files in `content` directory, use them as content available in default template for so called _file_repository_ - `_root.ftlh` and render results to output folder.
 
+
 ## Building the Site
 
 To build the site just run `kotao` in the root project directory. 
@@ -74,10 +102,6 @@ You can then access the site on http://localhost:8080
 
 When development server is running, it will watch for changes in the file system and will re-build the site
 if the underlying files changes. Web page will be automatically reloaded in the browser once the build completes.
-
-### Starting Dev Server
-
-
 
 ## Configuration
 
