@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import java.io.File
 import java.nio.charset.Charset
+import java.util.*
 
 /**
  * Kotao entry point class. Kotao depends on Guice to inject its main components which are defined in KotaoModule.
@@ -24,7 +25,6 @@ import java.nio.charset.Charset
  * Created on: 5/15/16
  */
 class Application {
-    //val log: Logger = org.slf4j.LoggerFactory.getLogger(Application::class.java)
     val log: Logger by lazyLogger()
     val injector: Injector by lazy { Guice.createInjector(KotaoModule()) }
     val generator: Generator by lazy { injector.getInstance(Generator::class) }
@@ -96,15 +96,32 @@ class Application {
 
 fun main(args: Array<String>) {
     val arguments = Arguments(ArgParser(args = args, helpFormatter = DefaultHelpFormatter()))
-
-
     val app = Application()
+
     try {
-        arguments.init?.run { app.initNewProject(this, arguments.overwrite); return }
-        app.init()
-        if (arguments.server) {
-            app.startServer()
-            app.watch()
+        arguments.apply {
+
+            version.ifFlagged {
+                val version = javaClass.getResourceAsStream("/version.properties")?.use {
+                    val props = Properties()
+                    props.load(it)
+                    props.getProperty("version", "UNKNOWN")
+                }
+                println("Kotao - Version $version")
+                return@main
+            }
+
+            init?.run {
+                app.initNewProject(this, arguments.overwrite)
+                return@main
+            }
+
+            app.init()
+
+            server.ifFlagged {
+                app.startServer()
+                app.watch()
+            }
         }
     } catch (e: ShowHelpException) {
         e.printAndExit("kotao")

@@ -8,7 +8,30 @@ import com.xenomachina.argparser.default
  * Created on: 6/1/17
  */
 class Arguments(parser: ArgParser) {
-	val server by parser.flagging(names = "-s", help = "Start development web server and watch filesystem for changes").default(false)
-	val init: String? by parser.storing(names = "--init", help = "Initializes a new Kotao static site project in a new directory.").default(null)
-	val overwrite by parser.flagging(names = "--overwrite", help = "Used together with --init, forces overwriting any existing files when initializing new project").default(false)
+
+	val server by parser.flagging(
+			names = "-s",
+			help = "Start development web server and watch filesystem for changes"
+	).default(false)
+
+	val init: String? by parser.storing(
+			names = "--init",
+			help = "Initializes a new Kotao static site project in a new directory."
+	).default(null)
+
+	val overwrite by parser.flagging(
+			names = "--overwrite",
+			help = "Used together with --init, forces overwriting any existing files when initializing new project"
+	).default(false)
+
+	val version by parser.flagging(
+			names = "--version",
+			help = "Prints version number"
+	).default(false)
+
+
+	//Helper function that runs the given block if the receiver is true
+	inline fun Boolean?.ifFlagged(block: () -> Unit) {
+		if (this != null && this) block.invoke()
+	}
 }

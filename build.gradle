@@ -11,31 +11,64 @@ buildscript {
     }
 }
 
-// apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
 mainClassName = "io.github.knes1.kotao.brew.ApplicationKt"
+version = '0.1.1'
 
 jar {
     baseName = 'kotao'
-    version =  '0.1.0'
+    version =  project.version
     manifest {
         attributes 'Implementation-Title': 'Kotao Static Site Generator',
                 'Implementation-Version': version,
                 'Main-Class': mainClassName
     }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+/**
+ * Unzips the distribution zip.
+ */
+task install(type: Copy, dependsOn: distZip) {
+
+    println("Starting install")
+    def zipFile = file("${buildDir}/distributions/kotao-${project.version}.zip")
+    def outputDir = file("${buildDir}/distributions/")
+
+    from zipTree(zipFile)
+    into outputDir
+
+    doLast {
+        def output = "${outputDir}/kotao"
+        //cleanup any previous installations
+        if (file(output).exists()) {
+            file(output).deleteDir()
+        }
+        file("${outputDir}/kotao-${project.version}").renameTo("${outputDir}/kotao")
+        println("Kotao installation available at ${outputDir}/kotao")
+    }
+
+}
+
+/**
+ * Adds version.properties with current build version to project.
+ */
+task createVerProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version
+            p.store w, null
+        }
     }
 }
+
+processResources.finalizedBy(createVerProperties)
 
 repositories {
     jcenter()
     mavenCentral()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
 }
 
 compileKotlin {
