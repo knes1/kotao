@@ -60,7 +60,7 @@ class KotaoModule : AbstractModule() {
 
     class ProcessorResolverProvider : Provider<ProcessorResolver> {
         override fun get(): ProcessorResolver {
-            return DefaultProcessorResolver(mapOf("Markdown" to PegDownMarkdownProcessor()))
+            return DefaultProcessorResolver(mapOf("Markdown" to FlexMarkMarkdownProcessor()))
         }
     }
 

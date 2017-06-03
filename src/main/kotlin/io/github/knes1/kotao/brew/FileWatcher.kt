@@ -18,6 +18,13 @@ class FileWatcher @Inject constructor(
 ) {
 	val log by lazyLogger()
 	val changeListeners = mutableListOf<() -> Unit>()
+	val watchedPaths = mutableListOf<Path>().apply {
+		val fs = FileSystems.getDefault()
+		addAll(config.repositories.filterIsInstance(FileRepositoryConfiguration::class.java).map { fs.getPath(it.basePath).toAbsolutePath() })
+		add(fs.getPath(config.structure.pathToTemplates()).toAbsolutePath())
+		add(fs.getPath(config.structure.pathToAssets()).toAbsolutePath())
+		add(fs.getPath("config.yaml").toAbsolutePath())
+	}.filter { Files.exists(it) }
 
 	fun addChangeListener(listener: () -> Unit) {
 		changeListeners.add(listener)
@@ -27,28 +34,26 @@ class FileWatcher @Inject constructor(
 		changeListeners.forEach { it.invoke() }
 	}
 
-	private fun pathsToWatch(): List<Path> =
-			mutableListOf<Path>().apply {
-				val fs = FileSystems.getDefault()
-				addAll(config.repositories.filterIsInstance(FileRepositoryConfiguration::class.java).map { fs.getPath(it.basePath) })
-				add(fs.getPath(config.structure.pathToTemplates()))
-				add(fs.getPath(config.structure.pathToAssets()))
-			}.filter { Files.exists(it) && Files.isDirectory(it) }
+	/**
+	 * Since the FS watcher is registered at root project path, we need to filter out only interesting changes in FS.
+	 * This function will return true if given path is of interest.
+	 */
+	private fun isWatched(path: Path): Boolean =
+		watchedPaths.find {
+			path.startsWith(it)
+		} != null
 
 
 	private fun configureWatchService(): WatchService {
+		val pathToWatch = FileSystems.getDefault().getPath(".")
 		val eventsToWatch = arrayOf(StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE)
 		val watchService: WatchService = if (System.getProperty("os.name").toLowerCase().contains("mac")) {
 			MacOSXWatchServiceFactory.newWatchService().apply {
-				pathsToWatch().forEach {
-					WatchableFile(it).register(this, *eventsToWatch)
-				}
+				WatchableFile(pathToWatch).register(this, *eventsToWatch)
 			}
 		} else {
 			FileSystems.getDefault().newWatchService().apply {
-				pathsToWatch().forEach {
-					it.register(this, *eventsToWatch)
-				}
+				pathToWatch.register(this, *eventsToWatch)
 			}
 		}
 		return watchService
@@ -61,8 +66,11 @@ class FileWatcher @Inject constructor(
 		while (true)  {
 			val key = watchService.take()
 			var changed = false
-			key.pollEvents().forEach {
+			key.pollEvents().filter { watchEvent ->
+				with(watchEvent.context()) { this is Path && isWatched(this) }
+			}.forEach {
 				val path = it.context()
+
 				if (it.kind() == StandardWatchEventKinds.OVERFLOW) {
 					//do nothing
 				} else if (it.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
@@ -82,13 +90,6 @@ class FileWatcher @Inject constructor(
 			}
 			if (changed) {
 				fireChange()
-				/*
-				val time = System.currentTimeMillis()
-				vertx.eventBus().send("updates", "starting")
-				generator.generateAll()
-				vertx.eventBus().send("updates", "finished")
-				log.info("Page generation finished in ${System.currentTimeMillis() - time} ms.")
-				*/
 			}
 			key.reset()
 		}
