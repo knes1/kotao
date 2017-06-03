@@ -44,9 +44,15 @@ The documentation is still work in progress as Kotao feature-set is evolving.
 
 To get the most recent version of kotao, you can build it from the sources. Clone the repository and then execute:
 
-`./gradlew build distZip`
+`./gradlew build install`
 
-You will then find the installation zip package with startup scripts in `build/distributions/kotao.zip`
+You will then find the following files in `build/distributions`:
+
+* `kotao-X.Y.Z.zip` - the relase package
+* `kotao/` - directory with unpacked release package - executable script is located there in `bin/kotao` (or `bin/kotao.bat` for Windows)
+
+If you want to easily update to latest development version of kotao, add `build/distributions/kotao/bin` to your PATH. Than you can just update kotao by pulling new version from the repo and running `./gradlew build install` again.
+
 
 ## Project Structure
 
